@@ -1,7 +1,9 @@
 {
+	"enableProposedApi": true,
 	"name": "nubook",
 	"displayName": "nushell-nubook",
 	"description": "NuShell Notebook",
+	"publisher": "darren-schroeder",
 	"version": "0.0.1",
 	"engines": {
 		"vscode": "^1.47.0"
@@ -10,14 +12,19 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:nubook.helloWorld"
+		"onNotebookEditor:nushell-nubook"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
-		"commands": [
+		"notebookProvider": [
 			{
-				"command": "nubook.helloWorld",
-				"title": "Hello World"
+				"viewType": "nushell-nubook",
+				"displayName": "NuShell Notebook Provider",
+				"selector": [
+					{
+						"filenamePattern": "*.nubook"
+					}
+				]
 			}
 		]
 	},
