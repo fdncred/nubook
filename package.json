@@ -1,6 +1,6 @@
 {
 	"name": "nubook",
-	"displayName": "nushell_ext",
+	"displayName": "nushell-nubook",
 	"description": "NuShell Notebook",
 	"version": "0.0.1",
 	"engines": {
