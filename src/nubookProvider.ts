@@ -1,5 +1,6 @@
 import AbortController from "abort-controller";
 import * as vscode from 'vscode';
+import * as child from 'child_process';
 
 interface RawNotebookCell {
 	language: string;
@@ -376,7 +377,16 @@ export class NuShellNotebookProvider implements vscode.NotebookContentProvider, 
 		// // fetch
 		// try {
 			const abortCtl = new AbortController();
-		// 	execution.cts.token.onCancellationRequested(_ => abortCtl.abort());
+			execution.cts.token.onCancellationRequested(_ => abortCtl.abort());
+			let count = 0;
+			let maxCount = 0;
+			let tooLarge = false;
+			let md = 'cd --help | to html --html_color';
+			let html = '';
+			while (!execution.cts.token.isCancellationRequested) {
+				const res = child.execFileSync('c:\\apps\\nushell\\nu_latest\\nu.exe', ['-c', 'cd --help | to html --html_color']);
+				html = res;
+			}
 
 		// 	for (let queryData of allQueryData) {
 		// 		const octokit = await this.octokit.lib();
@@ -454,7 +464,7 @@ export class NuShellNotebookProvider implements vscode.NotebookContentProvider, 
 		// 	html += `<div class="collapse"><script>function toggle(element, more) { element.parentNode.parentNode.classList.toggle("collapsed", !more)}</script><span class="more" onclick="toggle(this, true)">▼ Show ${count - (maxCount)} More</span><span class="less" onclick="toggle(this, false)">▲ Show Less</span></div>`;
 		// }
 
-		// // status line
+		// status line
 		// execution.resolve([{
 		// 	outputKind: vscode.CellOutputKind.Rich,
 		// 	data: {
@@ -463,6 +473,14 @@ export class NuShellNotebookProvider implements vscode.NotebookContentProvider, 
 		// 		['x-application/github-issues']: allItems
 		// 	}
 		// }], `${count}${tooLarge ? '+' : ''} results`);
+		execution.resolve([{
+			outputKind: vscode.CellOutputKind.Rich,
+			data: {
+				['text/html']: `<div class="${count > maxCount ? 'large collapsed' : ''}">${html}</div>`,
+				['text/markdown']: md,
+				['x-application/nushell-nubook']: md
+			}
+		}], `${count}${tooLarge ? '+' : ''} results`);
 	}
 
 	async cancelCellExecution(_document: vscode.NotebookDocument, cell: vscode.NotebookCell): Promise<void> {
